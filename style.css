@@ -60,10 +60,52 @@ body {
 
 .object1 {
     position: absolute;
-    width: 500px;
-    height: 700px;
-    top: -20;
+    width: 300px;
+    height: 400px;
+    top: 100;
     right: 10;
-    background: url("objects/object1.png") center center / auto no-repeat;
+    background-image: url("objects/object1.png");
+    background-repeat: no-repeat;
+    background-position: contain;
+    background-size: 50%;
+    background-blend-mode: luminosity;
+}
+
+.object2 {
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    top: 56%;
+    left: 50%;
+    background-image: url("objects/object2.png");
+    background-repeat: no-repeat;
+    background-position: contain;
+    background-size: 50%;
+    background-blend-mode: luminosity;
+}
+
+.object3 {
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    bottom: 35%;
+    right: 45%;
+    background-image: url("objects/object3.png");
+    background-repeat: no-repeat;
+    background-position: contain;
+    background-size: 50%;
+    background-blend-mode: luminosity;
+}
+
+.object4 {
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    top: 70%;
+    left: 15%;
+    background-image: url("objects/object4.png");
+    background-repeat: no-repeat;
+    background-position: contain;
+    background-size: 50%;
     background-blend-mode: luminosity;
 }
