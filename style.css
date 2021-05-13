@@ -1,6 +1,5 @@
 h1 {
-    bottom: 50%;
-    right 50%
+    margin-right: 2rem;
 }
 
 h2 {}
@@ -10,6 +9,17 @@ h3 {}
 h4 {}
 
 p {}
+
+.text {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 2rem;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    right: 0;
+}
 
 
 /* @-webkit-keyframes MOVE-BG {
@@ -56,9 +66,10 @@ body {
 #container {
     width: 90S%;
     height: 100vh;
-    background: url("layers/layer1.png") center center / cover no-repeat, url("layers/layer2.png") center center / auto no-repeat no-repeat, url("layers/layer3.png") center center / auto no-repeat no-repeat, url("layers/layer5.png") center center / auto no-repeat;
+    background: url("layers/layer1.png") center center / cover no-repeat, url("layers/layer2.png") center center / auto no-repeat no-repeat, url("layers/layer3.png") center center / auto no-repeat no-repeat, url("layers/layer4.png") center center / auto no-repeat;
     background-blend-mode: overlay;
     position: relative;
+    overflow: hidden;
 }
 
 .object1 {
