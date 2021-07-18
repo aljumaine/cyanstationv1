@@ -1,19 +1,32 @@
-(function() {
+$(function() {
     // Add event listener
-    document.addEventListener("mousemove", parallax);
-    const elem = document.querySelector("#parallax");
-    // Magic happens here
-    function parallax(e) {
-        let _w = window.innerWidth / 2;
-        let _h = window.innerHeight / 2;
-        let _mouseX = e.clientX;
-        let _mouseY = e.clientY;
-        let _depth1 = `${50 - (_mouseX - _w) * 0.01}% ${50 - (_mouseY - _h) * 0.01}%`;
-        let _depth2 = `${50 - (_mouseX - _w) * 0.02}% ${50 - (_mouseY - _h) * 0.02}%`;
-        let _depth3 = `${50 - (_mouseX - _w) * 0.06}% ${50 - (_mouseY - _h) * 0.06}%`;
-        let x = `${_depth3}, ${_depth2}, ${_depth1}`;
-        console.log(x);
-        elem.style.backgroundPosition = x;
+    document.addEventListener("mousemove", mousemove);
+    let px1 = $(".px-bg-1");
+    let px2 = $(".px-bg-2");
+    let halfWidth = window.innerWidth / 2;
+    let halfHeight = window.innerHeight / 2;
+    function onWindowResize(){
+      halfWidth = window.innerWidth / 2;
+      halfHeight = window.innerHeight / 2;
     }
-
-})();
+    window.addEventListener("resize", onWindowResize);
+    let _mouseX = 0;
+    let _mouseY = 0;
+    // Magic happens here
+    function mousemove(e) {
+      _mouseX = e.clientX;
+      _mouseY = e.clientY;
+    }
+    function loop() {
+      if (_mouseX && _mouseY) {
+        let x_norm = _mouseX / halfWidth - 1;
+        let y_norm = _mouseY / halfHeight - 1;
+        let _depth1 = {x: x_norm * 2, y: y_norm * 2};
+        let _depth2 = {x: x_norm * 3, y: y_norm * 3};
+        gsap.to(px1, {xPercent: _depth1.x, yPercent: _depth1.y, duration: 2, ease: 'sine.out'});
+        gsap.to(px2, {xPercent: _depth2.x, yPercent: _depth2.y, duration: 2, ease: 'sine.out'});
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+});
