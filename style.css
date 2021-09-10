@@ -8,7 +8,7 @@ h1 {}
 
 h2 {
     qdisplay: block;
-    font-size: 1.2em;
+    font-size: 1.4em;
     margin-block-start: 0.83em;
     margin-block-end: 0.83em;
     margin-inline-start: 0px;
@@ -51,7 +51,7 @@ body {
 
 .logo {
     width: auto;
-    height: 45px;
+    height: 55px;
     display: inline-block;
 }
 
@@ -73,8 +73,8 @@ body {
 .object-1 {
     top: 50%;
     right: 40%;
-    width: 50%;
-    height: 50%;
+    width: 30%;
+    height: 30%;
     background-image: url('images/objects/object1.png');
     background-blend-mode: luminosity;
     animation-name: object1;
@@ -353,7 +353,7 @@ body {
 
 .logo {
     width: auto;
-    height: 30px;
+    height: 55px;
     display: inline-block;
 }
 
