@@ -1,116 +1,97 @@
-/**
- * Webpack main configuration file
- */
-
-const path = require('path');
-const fs = require('fs');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
-const environment = require('./configuration/environment');
-
-const templateFiles = fs.readdirSync(environment.paths.source)
-  .filter((file) => path.extname(file).toLowerCase() === '.html');
-
-const htmlPluginEntries = templateFiles.map((template) => new HTMLWebpackPlugin({
-  inject: true,
-  hash: false,
-  filename: template,
-  template: path.resolve(environment.paths.source, template),
-  favicon: path.resolve(environment.paths.source, 'images', 'favicon.ico'),
-}));
+const path = require('path') // resolve path
+const HtmlWebpackPlugin = require('html-webpack-plugin') // create file.html
+const { CleanWebpackPlugin } = require('clean-webpack-plugin') // clean the folder each build
+const MiniCssExtractPlugin = require('mini-css-extract-plugin') // extract css to files
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin') // minify css
+const TerserPlugin = require('terser-webpack-plugin') // minify js
+const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer') // help tailwindcss to work
+const ImageminPlugin = require('imagemin-webpack-plugin').default
+const imageminMozjpeg = require('imagemin-mozjpeg')
 
 module.exports = {
-  entry: {
-    app: path.resolve(environment.paths.source, 'js', 'app.js'),
-  },
-  output: {
-    filename: 'js/[name].js',
-    path: environment.paths.output,
-  },
-  module: {
-    rules: [
-      {
-        test: /\.((c|sa|sc)ss)$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: ['babel-loader'],
-      },
-      {
-        test: /\.(png|gif|jpe?g|svg)$/i,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: environment.limits.images,
-          },
-        },
-        generator: {
-          filename: 'images/design/[name].[hash:6][ext]',
-        },
-      },
-      {
-        test: /\.(eot|ttf|woff|woff2)$/,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: environment.limits.images,
-          },
-        },
-        generator: {
-          filename: 'images/design/[name].[hash:6][ext]',
-        },
-      },
-    ],
-  },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-    }),
-    new ImageMinimizerPlugin({
-      test: /\.(jpe?g|png|gif|svg)$/i,
-      minimizerOptions: {
-        // Lossless optimization with custom option
-        // Feel free to experiment with options for better result for you
-        plugins: [
-          ['gifsicle', { interlaced: true }],
-          ['jpegtran', { progressive: true }],
-          ['optipng', { optimizationLevel: 5 }],
-          [
-            'svgo',
-            {
-              plugins: [
-                {
-                  name: 'removeViewBox',
-                  active: false,
-                },
-              ],
-            },
-          ],
-        ],
-      },
-    }),
-    new CleanWebpackPlugin({
-      verbose: true,
-      cleanOnceBeforeBuildPatterns: ['**/*', '!stats.json'],
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.resolve(environment.paths.source, 'images', 'content'),
-          to: path.resolve(environment.paths.output, 'images', 'content'),
-          toType: 'dir',
-          globOptions: {
-            ignore: ['*.DS_Store', 'Thumbs.db'],
-          },
-        },
-      ],
-    }),
-  ].concat(htmlPluginEntries),
-  target: 'web',
-};
+	mode: 'development',
+	devtool: 'eval-cheap-source-map',
+	devServer: { contentBase: path.join(__dirname, 'prod'), port: 3000, hot: true },
+
+	resolve: {
+		extensions: ['.js', '.jsx'] // we can import without typing '.js or .jsx'
+	},
+	entry: {
+		index: path.join(__dirname, 'src/index.jsx')
+	},
+
+	output: {
+		path: path.resolve(__dirname, './prod'),
+		filename: '[name].[hash].bundle.js' // for production use [contenthash], for developement use [hash]
+	},
+	plugins: [
+		new MiniCssExtractPlugin({ filename: '[name].[contenthash].css', chunkFilename: '[id].[contenthash].css' }),
+		// new CleanWebpackPlugin(),
+		new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }), // tell webpack that we dont want to remove index.html after each update
+		new HtmlWebpackPlugin({
+			template: path.join(__dirname, 'index.html')
+		}),
+		new ImageminPlugin({
+			// minimize images
+			pngquant: { quality: [0.5, 0.5] },
+			plugins: [imageminMozjpeg({ quality: 50 })]
+		})
+	],
+
+	optimization: {
+		minimizer: [new TerserPlugin(), new OptimizeCssAssetsPlugin({})],
+
+		moduleIds: 'deterministic',
+		runtimeChunk: 'single',
+		splitChunks: {
+			cacheGroups: {
+				vendor: {
+					test: /[\\/]node_modules[\\/]/,
+					name: 'vendors',
+					chunks: 'all'
+				}
+			}
+		}
+	},
+
+	module: {
+		rules: [
+			{
+				test: /\.(css|scss|sass)$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					'css-loader',
+					'sass-loader',
+					{
+						loader: 'postcss-loader', // postcss loader needed for tailwindcss
+						options: {
+							postcssOptions: {
+								ident: 'postcss',
+								plugins: [tailwindcss, autoprefixer]
+							}
+						}
+					}
+				]
+			},
+			{
+				test: /\.(png|svg|jpg|gif)$/i,
+				use: ['file-loader']
+			},
+			{
+				test: /\.html$/,
+				use: [{ loader: 'html-loader' }]
+			},
+			{
+				test: /\.(js|jsx)$/,
+				exclude: /(node_modules|bower_components|prod)/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: ['@babel/preset-env', '@babel/preset-react']
+					}
+				}
+			}
+		]
+	}
+}
