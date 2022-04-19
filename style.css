@@ -363,6 +363,10 @@ body {
     margin: 0;
 }
 
+.text a {
+    color: black;
+}
+
 .floating-objects {
     position: absolute;
     overflow: hidden;
@@ -372,4 +376,43 @@ body {
     pointer-events: none;
 }
 
+.curtain-swipe {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    z-index: 99;
+}
+
+.curtain {
+    position: relative;
+    background: black;
+    height: 50vh;
+    width: 100vw;
+    animation-delay: .15s;
+    animation-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+    animation-duration: .85s;
+    animation-fill-mode: forwards;
+}
+
+.animate-slideUp {
+    animation-name: slideUp;
+}
+
+.animate-slideDown {
+    animation-name: slideDown;
+}
+
+.hidden {
+    display: none;
+}
+
+@keyframes slideUp {
+    0%    { top: 0; }
+    100%  { top: -100%; }
+}
+
+
+@keyframes slideDown {
+    0%    { bottom: 0; }
+    100%  { bottom: -100%; }
 }
