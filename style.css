@@ -222,10 +222,8 @@ body {
 }
 
 .object-6 {
-    width: 30%;
-    height: 23%;
-    top: 20%;
-    left: 15%;
+    width: 18%;
+    height: 18%;
     background-image: url('images/objects/object6.png');
     animation-name: object6;
     animation-duration: 20s;
@@ -251,6 +249,8 @@ body {
     100% {
         left: 90%;
     }
+}
+   
 }
 
 .landing-page-title {
